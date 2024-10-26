@@ -10,8 +10,8 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Set the model you want to use (GPT-J)
-API_URL = "https://api-inference.huggingface.co/models/EleutherAI/gpt-j-6B"  # Change to GPT-J
+# Set the model you want to use (BART)
+API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large"
 
 @app.route('/')
 def index():
@@ -25,11 +25,11 @@ def chat():
         "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"  # Your Hugging Face API key
     }
     
-    # Include context for better responses
+    # Prepare the payload for the BART model
     payload = {
         "inputs": f"User: {user_message}\nBot:",  # Provide context for the model
         "parameters": {
-            "max_length": 50,  # Limit the response length
+            "max_length": 100,  # Limit the response length
             "num_return_sequences": 1,
             "temperature": 0.7  # Adjust randomness
         }
