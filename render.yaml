@@ -1,11 +1,9 @@
-# render.yaml
-version: 1
 services:
   - type: web
-    name: flask-chatbot
+    name: rasa-chatbot
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
     envVars:
-      - key: OPENAI_API_KEY
-        value: your_openai_api_key_here  # Set this directly in Render's dashboard instead
+      - key: RASA_API_KEY
+        value: "your_rasa_api_key"  # Use your actual Rasa API key here
