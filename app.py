@@ -10,8 +10,8 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Set the model you want to use (GPT-Neo)
-API_URL = "https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-2.7B"  # Change to GPT-Neo
+# Set the model you want to use (GPT-J)
+API_URL = "https://api-inference.huggingface.co/models/EleutherAI/gpt-j-6B"  # Change to GPT-J
 
 @app.route('/')
 def index():
