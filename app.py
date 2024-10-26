@@ -2,10 +2,12 @@ import os
 import requests
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
+from flask_cors import CORS  # Import CORS
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 RASA_API_URL = "http://localhost:5005/webhooks/rest/webhook"  # Rasa API endpoint
 RASA_API_KEY = os.getenv('RASA_API_KEY')  # Load the API key from .env
