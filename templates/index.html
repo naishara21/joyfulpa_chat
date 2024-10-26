@@ -1,32 +1,68 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
+    <title>Joful PA Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e0f7fa; /* Light blue background */
+        }
+        #chat-container {
+            width: 400px;
+            height: 500px;
+            border: 1px solid #0097a7; /* Darker blue border */
+            padding: 10px;
+            overflow-y: scroll;
+            background-color: #ffffff; /* White background for chat */
+            margin-bottom: 20px;
+        }
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #0097a7;
+        }
+        button {
+            background-color: #0097a7; /* Button color */
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <div id="chat"></div>
+    <h1>Rasa Chatbot</h1>
+    <div id="chat-container"></div>
     <input type="text" id="user-input" placeholder="Type your message here...">
-    <button onclick="sendMessage()">Send</button>
+    <button id="send-button">Send</button>
+
     <script>
-        async function sendMessage() {
-            const input = document.getElementById('user-input');
-            const userMessage = input.value;
-            input.value = '';
+        document.getElementById('send-button').onclick = function() {
+            const userInput = document.getElementById('user-input').value;
+            const chatContainer = document.getElementById('chat-container');
 
-            const chatDiv = document.getElementById('chat');
-            chatDiv.innerHTML += `<div>User: ${userMessage}</div>`;
-
-            const response = await fetch('/chat', {
+            fetch('/send-message', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userMessage })
-            });
-            const data = await response.json();
-            chatDiv.innerHTML += `<div>Bot: ${data.response}</div>`;
-        }
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `message=${encodeURIComponent(userInput)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatContainer.innerHTML += `<div>User: ${userInput}</div>`;
+                const botResponse = data.status === 'success' ? data.response : data.message;
+                chatContainer.innerHTML += `<div>Bot: ${JSON.stringify(botResponse)}</div>`;
+                document.getElementById('user-input').value = '';  // Clear input
+                chatContainer.scrollTop = chatContainer.scrollHeight;  // Scroll to the bottom
+            })
+            .catch(error => console.error('Error:', error));
+        };
     </script>
 </body>
 </html>
