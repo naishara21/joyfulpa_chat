@@ -10,8 +10,8 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Set the model you want to use
-API_URL = "https://api-inference.huggingface.co/models/gpt2"  # Example model, you can change it
+# Set the model you want to use (GPT-Neo)
+API_URL = "https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-2.7B"  # Change to GPT-Neo
 
 @app.route('/')
 def index():
@@ -24,11 +24,22 @@ def chat():
     headers = {
         "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"  # Your Hugging Face API key
     }
-    payload = {"inputs": user_message}
+    
+    # Include context for better responses
+    payload = {
+        "inputs": f"User: {user_message}\nBot:",  # Provide context for the model
+        "parameters": {
+            "max_length": 50,  # Limit the response length
+            "num_return_sequences": 1,
+            "temperature": 0.7  # Adjust randomness
+        }
+    }
 
     response = requests.post(API_URL, headers=headers, json=payload)
+    
     if response.status_code == 200:
-        bot_message = response.json()[0]['generated_text']
+        # Extract and clean the bot's response
+        bot_message = response.json()[0]['generated_text'].split('Bot: ')[-1].strip()
         return jsonify({'response': bot_message})
     else:
         return jsonify({'response': 'Error occurred while processing the request.'}), 500
